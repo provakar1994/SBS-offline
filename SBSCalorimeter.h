@@ -29,6 +29,7 @@ struct SBSBlockSet {
   Int_t col;
   Int_t id;
   Double_t TDCTime;
+  Double_t TDCTimeNC;
   Double_t ADCTime;
   Bool_t InCluster;
   Bool_t GoodTDC; 
@@ -37,6 +38,7 @@ struct SBSBlockSet {
 struct SBSCalBlocks {
   std::vector<Double_t> e;   //< []
   std::vector<Double_t> TDCTime;   //< [] 
+  std::vector<Double_t> TDCTimeNC;   //< [] 
   std::vector<Double_t> ADCTime;   //< [] 
   std::vector<Int_t> row; //< []
   std::vector<Int_t> col; //< []
@@ -54,6 +56,7 @@ struct SBSCalBlocks {
     row.clear();
     col.clear();
     TDCTime.clear();
+    TDCTimeNC.clear();
     ADCTime.clear();
     GoodTDC.clear();
   }
@@ -64,6 +67,7 @@ struct SBSCalorimeterOutput {
   std::vector<Double_t> again;   //< []
   std::vector<Double_t> atime;   //< []
   std::vector<Double_t> tdctime;   //< []
+  std::vector<Double_t> tdctime_nocorr;   //< []
   //std::vector<Double_t> e_c;   //< []
   std::vector<Double_t> x;   //< []
   std::vector<Double_t> y;   //< []
@@ -104,6 +108,7 @@ public:
   Double_t GetAgain();         //< Pedestal subtracted ADC integral (pC)
   Double_t GetAtime();         //< Main cluster ADC time of max block
   Double_t GetTDCtime();         //< Main cluster ADC time of max block
+  Double_t GetTDCtimeNC();         //< Main cluster TDC time of max block
   /* Double_t GetECorrected();    //< Main cluster corrected energy */
   Double_t GetX();             //< Main cluster energy average x
   Double_t GetY();             //< Main cluster energy average y
@@ -168,6 +173,9 @@ protected:
   // Clusters for this event
   std::vector<SBSCalorimeterCluster*> fClusters; // Cluster
   
+  // database
+  std::vector<Double_t> ftdctw;  //timewalk correction parameters
+
   Double_t    fTmax;            //< Maximum time difference for cluster block
   Double_t    fEmin;         //< Minimum energy for a cluster block
   Double_t fEmin_clusSeed; //< Minimum energy to be the seed of a cluster
@@ -227,6 +235,10 @@ inline Double_t SBSCalorimeter::GetAtime() {
 
 inline Double_t SBSCalorimeter::GetTDCtime() {
   return GetVVal(fMainclus.tdctime);
+}
+
+inline Double_t SBSCalorimeter::GetTDCtimeNC() {
+  return GetVVal(fMainclus.tdctime_nocorr);
 }
 
 /* inline Double_t SBSCalorimeter::GetECorrected() { */
